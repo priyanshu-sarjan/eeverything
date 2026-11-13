@@ -129,3 +129,4 @@ export const REAL_APMC_MANDIS = [
     operationalStatus: "AUTOMATED_N2_PURGE"
   }
 ];
+

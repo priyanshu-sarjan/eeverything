@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import { Truck, Search, ShieldCheck, Zap, Thermometer, ChevronRight, Phone, User, CheckCircle2, AlertTriangle, Eye } from 'lucide-react';
 
-export default function ShipmentsList({ shipments, onSelectShipment }) {
+export default function ShipmentsList({ shipments = [], onSelectShipment }) {
+  const safeShipments = Array.isArray(shipments) ? shipments : [];
   const [filterTier, setFilterTier] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filtered = shipments.filter(s => {
-    if (filterTier === 'TIER1' && !s.tier.includes('Tier 1')) return false;
-    if (filterTier === 'TIER2' && !s.tier.includes('Tier 2')) return false;
-    if (filterTier === 'TIER3' && !s.tier.includes('Tier 3')) return false;
-    if (filterTier === 'TIER4' && !s.tier.includes('Tier 4')) return false;
+  const filtered = safeShipments.filter(s => {
+    if (!s) return false;
+    if (filterTier === 'TIER1' && (!s.tier || !s.tier.includes('Tier 1'))) return false;
+    if (filterTier === 'TIER2' && (!s.tier || !s.tier.includes('Tier 2'))) return false;
+    if (filterTier === 'TIER3' && (!s.tier || !s.tier.includes('Tier 3'))) return false;
+    if (filterTier === 'TIER4' && (!s.tier || !s.tier.includes('Tier 4'))) return false;
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       return (
-        s.commodity.toLowerCase().includes(q) ||
-        s.origin.toLowerCase().includes(q) ||
-        s.destination.toLowerCase().includes(q) ||
-        s.trackingNumber.toLowerCase().includes(q) ||
-        s.id.toLowerCase().includes(q)
+        (s.commodity && s.commodity.toLowerCase().includes(q)) ||
+        (s.origin && s.origin.toLowerCase().includes(q)) ||
+        (s.destination && s.destination.toLowerCase().includes(q)) ||
+        (s.trackingNumber && s.trackingNumber.toLowerCase().includes(q)) ||
+        (s.id && s.id.toLowerCase().includes(q))
       );
     }
     return true;
@@ -62,7 +64,7 @@ export default function ShipmentsList({ shipments, onSelectShipment }) {
                 border: 'none', padding: '6px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer'
               }}
             >
-              All ({shipments.length})
+              All ({safeShipments.length})
             </button>
             <button
               onClick={() => setFilterTier('TIER1')}

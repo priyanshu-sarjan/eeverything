@@ -61,6 +61,9 @@ function MapController({ targetCenter, targetZoom }) {
 }
 
 export default function UnifiedMap({ shipments = [], corridors = [], onSelectShipment, onSelectMandi }) {
+  const safeShipments = Array.isArray(shipments) ? shipments : [];
+  const safeCorridors = Array.isArray(corridors) ? corridors : [];
+
   const [activeFilter, setActiveFilter] = useState('ALL'); // 'ALL', 'TIER1', 'MICRO', 'MANDIS', 'COLD_CHAIN'
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
@@ -85,7 +88,8 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
   const [camera, setCamera] = useState({ center: indiaCenter, zoom: 5 });
 
   // Filter Shipments
-  const filteredShipments = shipments.filter(s => {
+  const filteredShipments = safeShipments.filter(s => {
+    if (!s) return false;
     if (activeFilter === 'TIER1') return s.tier && s.tier.includes('Tier 1');
     if (activeFilter === 'MICRO') return s.tier && s.tier.includes('Tier 4');
     if (activeFilter === 'EXPRESS') return s.tier && s.tier.includes('Tier 2');
@@ -114,12 +118,14 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
         return {
           base: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
           overlay: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
           attribution: '&copy; Esri & NASA Earth Observation | Pan-India High-Res Satellite',
           maxZoom: 19
         };
       case 'esri-satellite':
         return {
           base: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
           overlay: null,
           attribution: '&copy; Esri & Open Data Contributors | Satellite Imagery',
           maxZoom: 19
@@ -153,7 +159,7 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
           base: apiKey 
             ? `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/256/{z}/{x}/{y}@2x?access_token=${apiKey}`
             : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-          subdomains: apiKey ? undefined : 'abcd',
+          subdomains: 'abcd',
           overlay: null,
           attribution: apiKey ? '&copy; Mapbox & OpenStreetMap | High-Res Navigation' : '&copy; CARTO (Fallback - Enter Mapbox Key)',
           maxZoom: 20
@@ -163,6 +169,7 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
           base: apiKey
             ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${apiKey}`
             : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
           overlay: apiKey ? null : 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
           attribution: apiKey ? '&copy; Mapbox High-Res Satellite' : '&copy; Esri World Imagery (Fallback)',
           maxZoom: 20
@@ -172,6 +179,7 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
           base: apiKey
             ? `https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&key=${apiKey}`
             : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
           overlay: apiKey ? null : 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
           attribution: apiKey ? '&copy; Google Maps Platform' : '&copy; Esri Satellite (Fallback - Enter Google Key)',
           maxZoom: 20
@@ -180,6 +188,7 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
         return {
           base: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
           overlay: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
           attribution: '&copy; Esri & Open Data Contributors | Pan-India Satellite',
           maxZoom: 19
         };
@@ -223,7 +232,7 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
                 border: 'none', padding: '5px 10px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer'
               }}
             >
-              All Fleet ({shipments.length})
+              All Fleet ({safeShipments.length})
             </button>
             
             <button 
@@ -342,7 +351,7 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
           <TileLayer
             key={mapProvider + (apiKey || '')}
             url={tileConfig.base}
-            subdomains={tileConfig.subdomains}
+            subdomains={tileConfig.subdomains || 'abc'}
             attribution={tileConfig.attribution}
             maxZoom={tileConfig.maxZoom || 19}
           />
@@ -352,13 +361,15 @@ export default function UnifiedMap({ shipments = [], corridors = [], onSelectShi
             <TileLayer
               key={`overlay-${mapProvider}`}
               url={tileConfig.overlay}
+              subdomains="abc"
               maxZoom={tileConfig.maxZoom || 19}
               opacity={0.9}
             />
           )}
 
           {/* National Logistics Corridors (Polylines) */}
-          {corridors && corridors.map(corridor => {
+          {safeCorridors.map(corridor => {
+            if (!corridor || !corridor.waypoints) return null;
             const positions = corridor.waypoints.map(w => [w.lat, w.lng]);
             const isAgriExpress = corridor.expressType.includes('Agri') || corridor.expressType.includes('Perishable');
             return (

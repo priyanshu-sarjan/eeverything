@@ -41,21 +41,21 @@ export default function App() {
     fetch('/api/shipments')
       .then(res => res.json())
       .then(data => {
-        if (data.success) setShipments(data.data);
+        if (data.success && Array.isArray(data.data)) setShipments(data.data);
       })
       .catch(console.error);
 
     fetch('/api/corridors')
       .then(res => res.json())
       .then(data => {
-        if (data.success) setCorridors(data.data);
+        if (data.success && Array.isArray(data.data)) setCorridors(data.data);
       })
       .catch(console.error);
 
     fetch('/api/analytics')
       .then(res => res.json())
       .then(data => {
-        if (data.success) setAnalyticsData(data.data);
+        if (data.success && data.data) setAnalyticsData(data.data);
       })
       .catch(console.error);
   }, []);
@@ -74,10 +74,10 @@ export default function App() {
       eventSource.onmessage = (event) => {
         try {
           const payload = JSON.parse(event.data);
-          if (payload.type === 'INIT' || payload.type === 'TELEMETRY_UPDATE') {
+          if ((payload.type === 'INIT' || payload.type === 'TELEMETRY_UPDATE') && Array.isArray(payload.shipments)) {
             setShipments(payload.shipments);
-          } else if (payload.type === 'NEW_SHIPMENT') {
-            setShipments(prev => [payload.shipment, ...prev]);
+          } else if (payload.type === 'NEW_SHIPMENT' && payload.shipment) {
+            setShipments(prev => [payload.shipment, ...(Array.isArray(prev) ? prev : [])]);
           }
         } catch (err) {
           console.error("SSE parse error", err);
@@ -96,7 +96,7 @@ export default function App() {
       fetch('/api/shipments')
         .then(res => res.json())
         .then(data => {
-          if (data.success) {
+          if (data.success && Array.isArray(data.data)) {
             setShipments(data.data);
             setIsLiveStreamConnected(true);
           }

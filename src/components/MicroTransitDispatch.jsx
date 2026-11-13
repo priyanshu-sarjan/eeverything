@@ -22,7 +22,7 @@ export default function MicroTransitDispatch({ onDispatchMicroTransit }) {
     fetch(`/api/micro-vehicles?city=${encodeURIComponent(city)}`)
       .then(res => res.json())
       .then(data => {
-        if (data.success) {
+        if (data.success && Array.isArray(data.data)) {
           setAvailableDrivers(data.data);
           if (data.data.length > 0) setSelectedDriver(data.data[0]);
         }

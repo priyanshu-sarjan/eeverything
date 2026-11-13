@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Thermometer, ShieldCheck, Zap, AlertTriangle, Activity, Droplets, Wind, Lock, RefreshCw, CheckCircle2, ChevronRight, Gauge } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function AgriFreshIoT({ shipments, onActivateBooster }) {
+export default function AgriFreshIoT({ shipments = [], onActivateBooster }) {
+  const safeShipments = Array.isArray(shipments) ? shipments : [];
   // Filter Tier 1 shipments with active telemetry
-  const agriShipments = shipments.filter(s => s.telemetry);
+  const agriShipments = safeShipments.filter(s => s && s.telemetry);
   const [selectedShipment, setSelectedShipment] = useState(agriShipments[0] || null);
   const [telemetryHistory, setTelemetryHistory] = useState([]);
   const [boosterLoading, setBoosterLoading] = useState(false);

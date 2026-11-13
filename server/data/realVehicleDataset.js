@@ -332,3 +332,4 @@ export const REAL_VEHICLE_FLEET = [
     }
   }
 ];
+
