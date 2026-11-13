@@ -5,6 +5,7 @@ import UnifiedMap from './components/UnifiedMap';
 import AgriFreshIoT from './components/AgriFreshIoT';
 import MicroTransitDispatch from './components/MicroTransitDispatch';
 import ShipmentsList from './components/ShipmentsList';
+import RealDatasetExplorer from './components/RealDatasetExplorer';
 import NewShipmentModal from './components/NewShipmentModal';
 import ShipmentDetailModal from './components/ShipmentDetailModal';
 import AnalyticsESG from './components/AnalyticsESG';
@@ -26,13 +27,14 @@ export default function App() {
     carbonOffsetCo2Tons: 612.4,
     nationalSupplyChainHealthScore: 98.7
   });
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'agrifresh', 'micro', 'shipments'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'agrifresh', 'micro', 'datasets', 'shipments'
   const [isLiveStreamConnected, setIsLiveStreamConnected] = useState(false);
 
-  // Modal States
+  // Modal & Selection States
   const [isNewShipmentOpen, setIsNewShipmentOpen] = useState(false);
   const [isMicroDispatchOpen, setIsMicroDispatchOpen] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState(null);
+  const [preselectedCrop, setPreselectedCrop] = useState(null);
 
   // Initial Fetch of Data
   useEffect(() => {
@@ -195,7 +197,25 @@ export default function App() {
           />
         )}
 
-        {/* Tab 4: Shipments Directory */}
+        {/* Tab 4: Real Crops & Vehicle Fleet Intelligence (Open Data) */}
+        {activeTab === 'datasets' && (
+          <RealDatasetExplorer
+            onDispatchCrop={(crop) => {
+              setPreselectedCrop(crop);
+              setIsNewShipmentOpen(true);
+            }}
+            onViewVehicleOnMap={(vehicle) => {
+              setActiveTab('overview');
+              // Highlight or find existing shipment matching this vehicle
+              const matchingShipment = shipments.find(s => s.vehicleNumber && s.vehicleNumber.includes(vehicle.registrationNumber));
+              if (matchingShipment) {
+                setSelectedShipment(matchingShipment);
+              }
+            }}
+          />
+        )}
+
+        {/* Tab 5: Shipments Directory */}
         {activeTab === 'shipments' && (
           <ShipmentsList
             shipments={shipments}
@@ -219,7 +239,7 @@ export default function App() {
             <strong style={{ color: '#ffffff' }}>BharatLogistics & AgriFresh IoT</strong> — Multi-Tier Unified Supply Chain Network for India
           </div>
           <div>
-            Built with React, Express, Leaflet, Recharts & IoT Telematics • SLA Target: 99.4% Zero Spoilage
+            Built with React, Express, Leaflet, Recharts & IoT Telematics • Grounded in Data.gov.in & Agmarknet
           </div>
         </div>
       </footer>
@@ -227,7 +247,11 @@ export default function App() {
       {/* Modals */}
       <NewShipmentModal
         isOpen={isNewShipmentOpen}
-        onClose={() => setIsNewShipmentOpen(false)}
+        initialCrop={preselectedCrop}
+        onClose={() => {
+          setIsNewShipmentOpen(false);
+          setPreselectedCrop(null);
+        }}
         onCreateShipment={handleCreateShipment}
       />
 

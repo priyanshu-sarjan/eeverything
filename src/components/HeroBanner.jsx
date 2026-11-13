@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Truck, Zap, Activity, Thermometer, Layers, Clock, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Truck, Zap, Activity, Thermometer, Layers, Clock, ArrowRight, Database } from 'lucide-react';
 
 export default function HeroBanner({ analyticsData, setActiveTab }) {
   return (
@@ -29,15 +29,34 @@ export default function HeroBanner({ analyticsData, setActiveTab }) {
             </h1>
 
             <p style={{ fontSize: '0.98rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '20px' }}>
-              Eliminating agricultural post-harvest food waste across India through an intelligent multi-tiered transit matrix. From high-maintenance perishable goods with real-time IoT thermal & ethylene monitoring, to hyperlocal 2-wheeler/3-wheeler micro-transit dispatch (Rapido & Uber freight model).
+              Eliminating agricultural post-harvest food waste across India through an intelligent multi-tiered transit matrix. Grounded in real open-source datasets (Data.gov.in & Agmarknet), with photorealistic satellite corridor mapping and real-time IoT telemetry.
             </p>
 
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <button className="btn-primary" onClick={() => setActiveTab('agrifresh')}>
                 <Thermometer size={18} /> Launch AgriFresh IoT Console
               </button>
+              <button 
+                onClick={() => setActiveTab('datasets')}
+                style={{
+                  background: 'rgba(234, 179, 8, 0.2)',
+                  border: '1px solid rgba(234, 179, 8, 0.5)',
+                  color: '#facc15',
+                  padding: '10px 18px',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Database size={18} /> Explore Real Crop & Fleet Datasets
+              </button>
               <button className="btn-amber" onClick={() => setActiveTab('micro')}>
-                <Zap size={18} /> Hyperlocal Dispatch Engine <ArrowRight size={16} />
+                <Zap size={18} /> Micro-Transit Dispatch <ArrowRight size={16} />
               </button>
             </div>
           </div>

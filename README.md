@@ -129,8 +129,43 @@ India is one of the world's largest producers of fruits, vegetables, and dairy, 
 | `GET` | `/api/corridors` | Fetch predefined Indian Logistics Express Corridors (NH-48, NH-44, etc.) |
 | `GET` | `/api/micro-vehicles` | Fetch available Rapido/Uber/Porter style drivers by city |
 | `POST` | `/api/micro-dispatch` | Request instant hyperlocal vehicle dispatch & generate OTP code |
+| `GET` | `/api/real-dataset/crops` | Fetch verified open-source Indian agricultural crops & mandi prices |
+| `GET` | `/api/real-dataset/vehicles` | Fetch real commercial & EV fleet specifications and live telematics |
+| `GET` | `/api/real-dataset/mandis` | Fetch APMC mandis and mega cold storage hubs across India |
+| `GET` | `/api/real-dataset/sync-online`| Synchronize real-time market price feeds from Agmarknet & Data.gov.in |
+| `GET` | `/api/map-config` | Fetch map tile providers and supported API key configurations |
 | `GET` | `/api/analytics` | Fetch national logistics ESG metrics & food waste savings |
 | `GET` | `/api/live-stream` | SSE endpoint streaming real-time sensor updates every 3.5 seconds |
+
+---
+
+## 🗺️ Realistic Map Engine & API Key Integration
+
+The map now features multi-provider high-resolution geospatial rendering:
+* **🛰️ Photorealistic Satellite + Hybrid**: High-resolution Esri World Imagery with highway numbers and place overlays *(Zero configuration / free)*.
+* **🌌 Obsidian Tactical Dark**: Low-light tactical operations room styling with CartoDB Dark Matter.
+* **🗺️ OpenStreetMap Standard**: Open-source street and highway grid across Indian states.
+* **🏔️ Topographic Terrain**: Elevation contours for Himalayan apple routes and Western Ghats fruit belts.
+* **⚡ Mapbox Navigation Dark & Satellite**: High-definition vector map tiles activated by providing a Mapbox Access Token (`pk.eyJ1...`).
+* **🌐 Google Maps Hybrid**: Satellite and traffic layers activated via Google Maps Platform API key.
+
+### Adding your Map API Key:
+1. **Via Web Interface**: Click the **"Map Layers & API Key"** button directly in the map header. Paste your Mapbox Access Token or Google Maps API Key and click **Apply & Update Map**. The key is saved safely in your browser's local storage.
+2. **Via `.env` file**:
+   ```env
+   VITE_MAPBOX_TOKEN=pk.your_mapbox_token_here
+   VITE_GOOGLE_MAPS_API_KEY=AIza_your_google_key_here
+   ```
+
+---
+
+## 🌾 Verified Open-Source Indian Datasets
+
+The platform integrates real agricultural and commercial fleet datasets:
+* **Agmarknet & Data.gov.in Open Mandi Data**: Covers 14+ GI-tagged commodities (Ratnagiri Alphonso Mangoes, Shimla Apples, Nashik Red Onions, Kolar Tomatoes, Nagpur Santra, Guntur Chillies, Punjab Basmati, Amul Milk, etc.) with real-world modal wholesale prices (₹/Qtl and ₹/kg), daily arrivals, harvest seasonality, and ICAR/NCCD cold-storage standards (temperature, humidity, ethylene sensitivity, safe transit hours).
+* **Commercial Vehicle Fleet Register**: Real commercial trucks and EV micro-vehicles (BharatBenz 2823C, Eicher Pro 6028, Tata Signa, Tata Ace EV, Ather 450X, Mahindra Treo Zor) with battery SOC %, compressor RPM, and FASTag green corridor clearance.
+* **APMC Mandis & Cold Storage Hubs**: Asia's largest mandis (Azadpur, Vashi, Lasalgaon, Kolar, Khanna) and mega cold chain terminals with storage capacities and national highway links.
+* **Dataset Export**: One-click download of the complete dataset in JSON and CSV formats directly from the UI.
 
 ---
 

@@ -104,6 +104,26 @@ export default function Navbar({ activeTab, setActiveTab, onOpenNewShipment, onO
           </button>
 
           <button 
+            onClick={() => setActiveTab('datasets')}
+            style={{
+              background: activeTab === 'datasets' ? 'rgba(234, 179, 8, 0.2)' : 'transparent',
+              color: activeTab === 'datasets' ? '#facc15' : '#94a3b8',
+              border: activeTab === 'datasets' ? '1px solid rgba(234, 179, 8, 0.4)' : '1px solid transparent',
+              padding: '8px 14px',
+              borderRadius: '8px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            🌾 Real Crops & Fleet (Open Data)
+          </button>
+
+          <button 
             onClick={() => setActiveTab('shipments')}
             style={{
               background: activeTab === 'shipments' ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
